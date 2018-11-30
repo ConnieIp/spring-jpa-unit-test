@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityManager;
+
 import static com.oocl.web.sampleWebApp.jpaSample.AssertHelper.assertThrows;
 import static org.junit.Assert.assertEquals;
 
@@ -14,6 +16,9 @@ import static org.junit.Assert.assertEquals;
 public class SingleEntityTests {
     @Autowired
     private SingleEntityRepository singleEntityRepository;
+    @Autowired
+    private EntityManager entityManager;
+
     @Test
     public void should_fetch_entity(){
         //Given
@@ -21,9 +26,11 @@ public class SingleEntityTests {
         singleEntity.id = 1L;
         singleEntity.name = "Hi";
         singleEntityRepository.save(singleEntity);
+        entityManager.flush();
 
         //When
         SingleEntity fetched=singleEntityRepository.getOne(1L);
+        entityManager.clear();
 
         //Then
         assertEquals("Hi",fetched.name);
